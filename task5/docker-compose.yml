@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    image: softy-backend:latest
+    ports:
+      - "5252:5252"
+    volumes:
+      - ./back-end:/app
+    restart: always
+
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    image: softy-frontend:latest
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./front-end:/var/www/html/softy-pinko-front-end
+    restart: always
+    depends_on:
+      - backend
+
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    image: softy-proxy:latest
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - frontend
+      - backend
